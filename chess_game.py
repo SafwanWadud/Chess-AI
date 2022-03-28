@@ -10,35 +10,30 @@ def printStart():
     print("Black (AI) pieces are in lower case")
 
 
-def get_player_move(turn):
+def get_player_move():
     while True:
-        move = input(str(board.fullmove_number) + ". "+turn + " move: ")
+        uci_move = input(str(board.fullmove_number) + ". White move: ")
         try:
-            san_move = board.parse_san(move)
+            move = chess.Move.from_uci(uci_move)
         except:
             print("\nInvalid move\n")
         else:
-            if (san_move not in board.legal_moves):
+            if (move not in board.legal_moves):
                 print("\nInvalid move\n")
             else:
                 return move
 
 
 def main():
-
     printStart()
     print("\n" + str(board) + "\n")
     outcome = None
     while outcome == None:
         if(board.turn == chess.WHITE):
-            move = get_player_move("White")
-            board.push_san(move)
+            move = get_player_move()
         elif(board.turn == chess.BLACK):
-            # move = getMove("Black")
             move = get_agent_move(board)
-            board.push(move)
-        # print(move)
-        # board.push(chess.Move.from_uci(move))
+        board.push(move)
         print("\n" + str(board) + "\n")
         outcome = board.outcome()
 

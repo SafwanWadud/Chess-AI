@@ -7,8 +7,10 @@ MAX_DEPTH = 3
 
 def get_agent_move(board):
     # def get_agent_move():
-    print("Agent choosing move...")
-    return minimax_search(board)
+    print(str(board.fullmove_number) + ". Black move: ", end='', flush=True)
+    move = minimax_search(board)
+    print(move)
+    return move
 
 
 def minimax_search(board):
