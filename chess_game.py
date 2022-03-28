@@ -1,4 +1,5 @@
 import chess
+from chess_ai import *
 
 board = chess.Board()
 
@@ -9,9 +10,9 @@ def printStart():
     print("Black (AI) pieces are in lower case")
 
 
-def getMove(turn):
+def get_player_move(turn):
     while True:
-        move = input(str(board.fullmove_number) + ". "+turn + "move: ")
+        move = input(str(board.fullmove_number) + ". "+turn + " move: ")
         try:
             san_move = board.parse_san(move)
         except:
@@ -30,15 +31,18 @@ def main():
     outcome = None
     while outcome == None:
         if(board.turn == chess.WHITE):
-            move = getMove("White")
+            move = get_player_move("White")
+            board.push_san(move)
         elif(board.turn == chess.BLACK):
-            move = getMove("Black")
-        print(move)
+            # move = getMove("Black")
+            move = get_agent_move(board)
+            board.push(move)
+        # print(move)
         # board.push(chess.Move.from_uci(move))
-        board.push_san(move)
         print("\n" + str(board) + "\n")
         outcome = board.outcome()
 
+    # fix
     result = "Tie game"
     if outcome.winner == chess.WHITE:
         result = "White wins"
