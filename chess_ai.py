@@ -44,5 +44,32 @@ def min_value(board, depth):
     return value, min_move
 
 
+PIECE_VALUES = {
+    #Black (AI)
+    'p': 1,      # pawn
+    'n': 3,      # knight
+    'b': 3,      # bishop
+    'r': 5,      # rook
+    'q': 9,      # queen
+    'k': 1000,   # king
+    #White (Player)
+    'P': -1,
+    'N': -3,
+    'B': -3,
+    'R': -5,
+    'Q': -9,
+    'K': -1000,
+}
+
+MOBILITY_WEIGHT = 0.1
+
+
 def evaluation(board):
-    return 1
+    eval = 0
+    fen = board.board_fen()
+    turn = board.turn
+    for char in fen:
+        if char in PIECE_VALUES:
+            eval += PIECE_VALUES[char]
+    eval += MOBILITY_WEIGHT * board.legal_moves.count() * (1 if turn == 'b' else -1)
+    return eval
