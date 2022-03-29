@@ -26,7 +26,9 @@ def get_player_move():
 
 def main():
     printStart()
-    print("\n" + str(board) + "\n")
+    print("\n" + str(board))
+    print("---------------")
+    print("a b c d e f g h\n")
     outcome = None
     while outcome == None:
         if(board.turn == chess.WHITE):
@@ -34,7 +36,9 @@ def main():
         elif(board.turn == chess.BLACK):
             move = get_agent_move(board)
         board.push(move)
-        print("\n" + str(board) + "\n")
+        print("\n" + str(board))
+        print("---------------")
+        print("a b c d e f g h\n")
         outcome = board.outcome()
 
     # fix

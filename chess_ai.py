@@ -1,46 +1,56 @@
-# import chess
-# board = chess.Board()
 from math import inf
 
-MAX_DEPTH = 3
+MAX_DEPTH = 4
+
+num_evals = 0
 
 
 def get_agent_move(board):
-    # def get_agent_move():
+    global num_evals
+    num_evals = 0
     print(str(board.fullmove_number) + ". Black move: ", end='', flush=True)
     move = minimax_search(board)
     print(move)
+    print("Number of evaluations: "+str(num_evals))
     return move
 
 
 def minimax_search(board):
-    value, move = max_value(board, MAX_DEPTH)
+    value, move = max_value(board, MAX_DEPTH, -inf, inf)
     return move
 
 
-def max_value(board, depth):
+def max_value(board, depth, alpha, beta):
     if(board.legal_moves.count() == 0 or depth == 0):
         return evaluation(board), None
     value = -inf
     for move in board.legal_moves:
         board.push(move)
-        value2, move2 = min_value(board, depth-1)
+        value2, move2 = min_value(board, depth-1, alpha, beta)
         board.pop()
-        if (value2 > value):
+        if(value2 > alpha):
+            alpha = value2
+        if(value2 > value):
             value, max_move = value2, move
+        if (value >= beta):
+            break
     return value, max_move
 
 
-def min_value(board, depth):
+def min_value(board, depth, alpha, beta):
     if(board.legal_moves.count() == 0 or depth == 0):
         return evaluation(board), None
     value = inf
     for move in board.legal_moves:
         board.push(move)
-        value2, move2 = min_value(board, depth-1)
+        value2, move2 = max_value(board, depth-1, alpha, beta)
         board.pop()
-        if (value2 < value):
+        if(value2 < beta):
+            beta = value2
+        if(value2 < value):
             value, min_move = value2, move
+        if (value <= alpha):
+            break
     return value, min_move
 
 
@@ -65,6 +75,8 @@ MOBILITY_WEIGHT = 0.1
 
 
 def evaluation(board):
+    global num_evals
+    num_evals += 1
     eval = 0
     fen = board.board_fen()
     turn = board.turn

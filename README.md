@@ -2,7 +2,7 @@
 
 ### Tasks
 
--   [ ] add evaluation function
+-   [x] add evaluation function
 -   [ ] fix how outcome of game is checked
 -   [ ] add pawn promotion
 -   [ ] add alpha-beta pruning
