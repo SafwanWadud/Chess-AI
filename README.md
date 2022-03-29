@@ -5,7 +5,7 @@
 -   [x] add evaluation function
 -   [ ] fix how outcome of game is checked
 -   [ ] add pawn promotion
--   [ ] add alpha-beta pruning
+-   [x] add alpha-beta pruning
 -   [ ] add better move ordering
 -   [ ] add transposition table
 
