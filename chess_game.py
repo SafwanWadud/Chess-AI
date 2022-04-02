@@ -10,6 +10,16 @@ def printStart():
     print("Black (AI) pieces are in lower case")
 
 
+def printBoard():
+    boardStr = str(board).split('\n')
+    print("\n    a b c d e f g h")
+    print("  +-----------------+")
+    for i in range(len(boardStr)):
+        print(str(8-i)+" | "+boardStr[i] + " | " + str(8-i))
+    print("  +-----------------+")
+    print("    a b c d e f g h\n")
+
+
 def get_player_move():
     while True:
         uci_move = input(str(board.fullmove_number) + ". White move: ")
@@ -26,9 +36,7 @@ def get_player_move():
 
 def main():
     printStart()
-    print("\n" + str(board))
-    print("---------------")
-    print("a b c d e f g h\n")
+    printBoard()
     outcome = None
     while outcome == None:
         if(board.turn == chess.WHITE):
@@ -36,9 +44,7 @@ def main():
         elif(board.turn == chess.BLACK):
             move = get_agent_move(board)
         board.push(move)
-        print("\n" + str(board))
-        print("---------------")
-        print("a b c d e f g h\n")
+        printBoard()
         outcome = board.outcome()
 
     # fix
