@@ -2,10 +2,8 @@
 
 ### Tasks
 
--   [x] add evaluation function
--   [ ] fix how outcome of game is checked
+-   [ ] improve evaluation function
 -   [ ] add pawn promotion
--   [x] add alpha-beta pruning
 -   [ ] add better move ordering
 -   [ ] add transposition table
 
