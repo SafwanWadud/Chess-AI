@@ -1,11 +1,33 @@
 from math import inf
 
+
 MAX_DEPTH = 4
+MOBILITY_WEIGHT = 0.1
+EXACT = 0
+UPPER = 1
+LOWER = 2
+PIECE_VALUES = {
+    # Black (AI)
+    'p': 1,      # pawn
+    'n': 3,      # knight
+    'b': 3,      # bishop
+    'r': 5,      # rook
+    'q': 9,      # queen
+    'k': 1000,   # king
+    # White (Player)
+    'P': -1,
+    'N': -3,
+    'B': -3,
+    'R': -5,
+    'Q': -9,
+    'K': -1000,
+}
+
 
 num_evals = 0
 explored_nodes = 0
 transpo_lookups = 0
-
+# key = board part of fen string; value = tuple (state value, depth at which value was computed, type of value (EXACT, UPPER, or LOWER))
 transpo_table = {}
 
 
@@ -52,8 +74,18 @@ def max_value(board, depth, alpha, beta):
         return evaluation(board)
 
     if board.board_fen() in transpo_table:
-        transpo_lookups += 1
-        return transpo_table[board.board_fen()]
+        entry = transpo_table[board.board_fen()]
+        if (entry[1] >= depth):
+            if(entry[2] == EXACT):
+                transpo_lookups += 1
+                return entry[0]
+            elif(entry[2] == UPPER):
+                beta = min(beta, entry[0])
+            elif(entry[2] == LOWER):
+                alpha = max(alpha, entry[0])
+            if (alpha >= beta):
+                transpo_lookups += 1
+                return entry[0]
 
     value = -inf
     for move in board.legal_moves:
@@ -64,8 +96,11 @@ def max_value(board, depth, alpha, beta):
             value, max_move = value2, move
             alpha = max(alpha, value)
         if (value >= beta):
+            # value is lower bounded by beta
+            transpo_table[board.board_fen()] = (value, depth, LOWER)
             return value
-    transpo_table[board.board_fen()] = value
+    # found exact value
+    transpo_table[board.board_fen()] = (value, depth, EXACT)
     return value
 
 
@@ -77,8 +112,17 @@ def min_value(board, depth, alpha, beta):
         return evaluation(board)
 
     if board.board_fen() in transpo_table:
-        transpo_lookups += 1
-        return transpo_table[board.board_fen()]
+        entry = transpo_table[board.board_fen()]
+        if (entry[1] >= depth):
+            transpo_lookups += 1
+            if(entry[2] == EXACT):
+                return entry[0]
+            elif(entry[2] == UPPER):
+                beta = min(beta, entry[0])
+            elif(entry[2] == LOWER):
+                alpha = max(alpha, entry[0])
+            if (alpha >= beta):
+                return entry[0]
 
     value = inf
     for move in board.legal_moves:
@@ -89,29 +133,12 @@ def min_value(board, depth, alpha, beta):
             value, min_move = value2, move
             beta = min(beta, value)
         if (value <= alpha):
+            # value is upper bounded by alpha
+            transpo_table[board.board_fen()] = (value, depth, UPPER)
             return value
-    transpo_table[board.board_fen()] = value
+    # found exact value
+    transpo_table[board.board_fen()] = (value, depth, EXACT)
     return value
-
-
-PIECE_VALUES = {
-    # Black (AI)
-    'p': 1,      # pawn
-    'n': 3,      # knight
-    'b': 3,      # bishop
-    'r': 5,      # rook
-    'q': 9,      # queen
-    'k': 1000,   # king
-    # White (Player)
-    'P': -1,
-    'N': -3,
-    'B': -3,
-    'R': -5,
-    'Q': -9,
-    'K': -1000,
-}
-
-MOBILITY_WEIGHT = 0.1
 
 
 def evaluation(board):
