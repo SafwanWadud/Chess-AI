@@ -56,13 +56,15 @@ def minimax_search(board):
     best_value = -inf
     alpha = -inf
     beta = inf
-    for move in board.legal_moves:
-        board.push(move)
-        value = min_value(board, MAX_DEPTH - 1, alpha, beta)
-        board.pop()
-        if(value > best_value):
-            best_value, best_move = value, move
-            alpha = max(alpha, best_value)
+    ranked_moves = rank_moves(board.legal_moves, board)
+    for score in sorted(ranked_moves, reverse=True):
+        for move in ranked_moves[score]:
+            board.push(move)
+            value = min_value(board, MAX_DEPTH - 1, alpha, beta)
+            board.pop()
+            if(value > best_value):
+                best_value, best_move = value, move
+                alpha = max(alpha, best_value)
     return best_move
 
 
@@ -88,7 +90,6 @@ def max_value(board, depth, alpha, beta):
                 return entry[0]
 
     value = -inf
-    # for move in board.legal_moves:
     ranked_moves = rank_moves(board.legal_moves, board)
     for score in sorted(ranked_moves, reverse=True):
         for move in ranked_moves[score]:
@@ -96,7 +97,7 @@ def max_value(board, depth, alpha, beta):
             value2 = min_value(board, depth-1, alpha, beta)
             board.pop()
             if(value2 > value):
-                value, max_move = value2, move
+                value = value2
                 alpha = max(alpha, value)
             if (value >= beta):
                 # value is lower bounded by beta
@@ -128,8 +129,6 @@ def min_value(board, depth, alpha, beta):
                 return entry[0]
 
     value = inf
-
-    # for move in board.legal_moves:
     ranked_moves = rank_moves(board.legal_moves, board)
     for score in sorted(ranked_moves, reverse=True):
         for move in ranked_moves[score]:
@@ -137,7 +136,7 @@ def min_value(board, depth, alpha, beta):
             value2 = max_value(board, depth-1, alpha, beta)
             board.pop()
             if(value2 < value):
-                value, min_move = value2, move
+                value = value2
                 beta = min(beta, value)
             if (value <= alpha):
                 # value is upper bounded by alpha

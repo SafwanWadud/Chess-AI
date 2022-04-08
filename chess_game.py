@@ -11,7 +11,8 @@ def printStart():
 
 
 def printBoard():
-    boardStr = str(board).split('\n')
+    boardStr = str(board).split('\n')  # alphabetic characters for pieces
+    # boardStr = str(chess.BaseBoard(board_fen=board.board_fen()).unicode()).split('\n')  # unicode characters for pieces
     print("\n    a b c d e f g h")
     print("  +-----------------+")
     for i in range(len(boardStr)):
