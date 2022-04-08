@@ -4,13 +4,13 @@
 
 -   [ ] improve evaluation function
 -   [ ] add pawn promotion
--   [ ] add better move ordering
--   [ ] add transposition table
+-   [ ] improve move ordering
+-   [ ] improve transposition table
 
 ### Instructions to Run
 
     pip install chess
-    python chess_game.py
+    py chess_game.py
 
 ### Members
 
@@ -21,4 +21,5 @@
 ### Sources
 
 -   https://python-chess.readthedocs.io/en/latest/index.html
+-   https://www.chessprogramming.org/Main_Page
 -   Stuart Russell and Peter Norvig. Artificial Intelligence: Modern Approach. 4th Edition. 2020

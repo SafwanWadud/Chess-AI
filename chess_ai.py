@@ -1,7 +1,7 @@
 from math import inf
 
 
-MAX_DEPTH = 4
+MAX_DEPTH = 5
 MOBILITY_WEIGHT = 0.1
 EXACT = 0
 UPPER = 1
@@ -88,17 +88,20 @@ def max_value(board, depth, alpha, beta):
                 return entry[0]
 
     value = -inf
-    for move in board.legal_moves:
-        board.push(move)
-        value2 = min_value(board, depth-1, alpha, beta)
-        board.pop()
-        if(value2 > value):
-            value, max_move = value2, move
-            alpha = max(alpha, value)
-        if (value >= beta):
-            # value is lower bounded by beta
-            transpo_table[board.board_fen()] = (value, depth, LOWER)
-            return value
+    # for move in board.legal_moves:
+    ranked_moves = rank_moves(board.legal_moves, board)
+    for score in sorted(ranked_moves, reverse=True):
+        for move in ranked_moves[score]:
+            board.push(move)
+            value2 = min_value(board, depth-1, alpha, beta)
+            board.pop()
+            if(value2 > value):
+                value, max_move = value2, move
+                alpha = max(alpha, value)
+            if (value >= beta):
+                # value is lower bounded by beta
+                transpo_table[board.board_fen()] = (value, depth, LOWER)
+                return value
     # found exact value
     transpo_table[board.board_fen()] = (value, depth, EXACT)
     return value
@@ -125,20 +128,53 @@ def min_value(board, depth, alpha, beta):
                 return entry[0]
 
     value = inf
-    for move in board.legal_moves:
-        board.push(move)
-        value2 = max_value(board, depth-1, alpha, beta)
-        board.pop()
-        if(value2 < value):
-            value, min_move = value2, move
-            beta = min(beta, value)
-        if (value <= alpha):
-            # value is upper bounded by alpha
-            transpo_table[board.board_fen()] = (value, depth, UPPER)
-            return value
+
+    # for move in board.legal_moves:
+    ranked_moves = rank_moves(board.legal_moves, board)
+    for score in sorted(ranked_moves, reverse=True):
+        for move in ranked_moves[score]:
+            board.push(move)
+            value2 = max_value(board, depth-1, alpha, beta)
+            board.pop()
+            if(value2 < value):
+                value, min_move = value2, move
+                beta = min(beta, value)
+            if (value <= alpha):
+                # value is upper bounded by alpha
+                transpo_table[board.board_fen()] = (value, depth, UPPER)
+                return value
     # found exact value
     transpo_table[board.board_fen()] = (value, depth, EXACT)
     return value
+
+
+def rank_moves(moves, board):
+    CHECK = 10
+    CAPTURE = 3
+    THREAT = 2
+    FORWARD = 1
+    is_white_turn = board.turn
+    rankings = {}
+    for move in moves:
+        score = 0
+        # Check if it's a check move
+        if board.gives_check(move):
+            score += CHECK
+        # Check if it's a capture move
+        if (board.is_capture(move)):
+            score += CAPTURE
+        # Check if it's a forward move
+        uci = board.uci(move)
+        currRow = int(uci[1])
+        nextRow = int(uci[3])
+        diff = (nextRow - currRow) * (1 if is_white_turn else -1)
+        if diff > 0:
+            score += FORWARD
+
+        if score not in rankings:
+            rankings[score] = []
+        rankings[score].append(move)
+    return rankings
 
 
 def evaluation(board):
