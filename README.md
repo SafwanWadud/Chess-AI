@@ -1,12 +1,5 @@
 # Chess-AI
 
-### Tasks
-
--   [ ] improve evaluation function
--   [ ] add pawn promotion
--   [ ] improve move ordering
--   [ ] improve transposition table
-
 ### Instructions to Run
 
     pip install chess
