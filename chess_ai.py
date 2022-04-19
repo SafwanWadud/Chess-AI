@@ -13,14 +13,14 @@ PIECE_VALUES = {
     'b': 3,      # bishop
     'r': 5,      # rook
     'q': 9,      # queen
-    'k': 1000,   # king
+    'k': 200,   # king
     # White (Player)
     'P': -1,
     'N': -3,
     'B': -3,
     'R': -5,
     'Q': -9,
-    'K': -1000,
+    'K': -200,
 }
 
 
@@ -78,15 +78,16 @@ def max_value(board, depth, alpha, beta):
     if board.board_fen() in transpo_table:
         entry = transpo_table[board.board_fen()]
         if (entry[1] >= depth):
+            transpo_lookups += 1
             if(entry[2] == EXACT):
-                transpo_lookups += 1
+                # transpo_lookups += 1
                 return entry[0]
             elif(entry[2] == UPPER):
                 beta = min(beta, entry[0])
             elif(entry[2] == LOWER):
                 alpha = max(alpha, entry[0])
             if (alpha >= beta):
-                transpo_lookups += 1
+                # transpo_lookups += 1
                 return entry[0]
 
     value = -inf
